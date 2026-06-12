@@ -1,0 +1,26 @@
+services:
+  # Python FastAPI Backend
+  backend:
+    build: ./backend
+    container_name: gemini_backend
+    ports:
+      - "8000:8000"
+    environment:
+      # Maps local .env variable to container environment
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    volumes:
+      # Mount code for hot-reloading during development
+      - ./backend:/app
+    restart: on-failure
+
+  # Nginx Frontend
+  frontend:
+    image: nginx:alpine
+    container_name: gemini_frontend
+    ports:
+      - "80:80"
+    volumes:
+      # Mount the frontend directory to Nginx's HTML folder
+      - ./frontend:/usr/share/nginx/html
+    depends_on:
+      - backend
